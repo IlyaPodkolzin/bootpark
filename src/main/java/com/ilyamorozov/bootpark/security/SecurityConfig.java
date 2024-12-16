@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,7 +18,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -36,8 +40,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Отключение CSRF
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll() // Разрешить доступ к эндпоинтам, начинающимся с /api
+                        .requestMatchers("/api/auth/**").permitAll() // Разрешить доступ к эндпоинтам, начинающимся с /api
                         .anyRequest().authenticated()          // Все остальные запросы требуют аутентификации
                 )
                 .sessionManagement(session -> session
@@ -49,6 +54,12 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable); // Отключение HTTP Basic-аутентификации
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED); // Вернуть 401
     }
 
     @Bean

@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-import static com.ilyamorozov.bootpark.security.SecurityConstants.jwtSecretKey;
-
 
 @Component
 public class JWTGenerator {
@@ -23,13 +21,13 @@ public class JWTGenerator {
                 .setSubject(username)
                 .setIssuedAt(currentDate)
                 .setExpiration(expireDate)
-                .signWith(jwtSecretKey) // Используем SecretKey вместо строки
+                .signWith(SecurityConstants.JWT_SECRET) // Используем SecretKey вместо строки
                 .compact();
     }
 
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(jwtSecretKey) // Используем SecretKey
+                .setSigningKey(SecurityConstants.JWT_SECRET) // Используем SecretKey
                 .build()
                 .parseClaimsJws(token) // Используем parseClaimsJws вместо parseClaimsJwt
                 .getBody();
@@ -39,7 +37,7 @@ public class JWTGenerator {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(jwtSecretKey) // Используем SecretKey
+                    .setSigningKey(SecurityConstants.JWT_SECRET) // Используем SecretKey
                     .build()
                     .parseClaimsJws(token); // Если токен корректен, он успешно парсится
             return true;
