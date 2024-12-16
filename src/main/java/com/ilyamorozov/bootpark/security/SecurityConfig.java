@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,22 +22,30 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private JwtAuthEntryPoint authEntryPoint;
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint) {
         this.userDetailsService = userDetailsService;
+        this.authEntryPoint = authEntryPoint;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Новый способ отключения CSRF
+                .csrf(AbstractHttpConfigurer::disable) // Отключение CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated() // Все запросы требуют аутентификации
+                        .requestMatchers("/api/**").permitAll() // Разрешить доступ к эндпоинтам, начинающимся с /api
+                        .anyRequest().authenticated()          // Все остальные запросы требуют аутентификации
                 )
-                .httpBasic(AbstractHttpConfigurer::disable); // Новый API для настройки HTTP Basic
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Сессии не создаются (JWT)
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authEntryPoint) // Настройка кастомного обработчика для неавторизованных запросов
+                )
+                .httpBasic(AbstractHttpConfigurer::disable); // Отключение HTTP Basic-аутентификации
 
         return http.build();
     }
