@@ -33,29 +33,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Новый способ отключения CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET).authenticated()
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated() // Все запросы требуют аутентификации
                 )
                 .httpBasic(AbstractHttpConfigurer::disable); // Новый API для настройки HTTP Basic
 
         return http.build();
-    }
-
-    @Bean
-    public UserDetailsService users() {
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password("admin")
-                .roles("ADMIN")
-                .build();
-
-        UserDetails user = User.builder()
-                .username("user")
-                .password("user")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
     }
 
     @Bean
