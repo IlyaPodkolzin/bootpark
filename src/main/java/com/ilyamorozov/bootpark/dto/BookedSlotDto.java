@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookedSlotDto {
 
-    private Long id;
-    private Parking parking;
-    private UserEntity userEntity;
+    private Long id;   // мы получаем только айдишники парковки и юзера, а не их объекты. Далее в объект
+    private Long parkingId;  // BookedSlot записываем объекты парковки и юзера, найденные по айдишникам
+    private Long userEntityId;
     private LocalDateTime dateOfEnd;
 }

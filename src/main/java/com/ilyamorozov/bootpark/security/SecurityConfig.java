@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/parkings/*").hasAnyAuthority("ADMIN")  // выполнять
                         .requestMatchers(HttpMethod.PUT, "/api/parkings/*").hasAnyAuthority("ADMIN")  // CRUD-операции
                         .requestMatchers(HttpMethod.DELETE, "/api/parkings/*").hasAnyAuthority("ADMIN")  // с парковками
-                        .anyRequest().authenticated()          // Все остальные запросы требуют аутентификации
+                        .anyRequest().permitAll()         // Все остальные запросы требуют аутентификации
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Сессии не создаются (JWT)
