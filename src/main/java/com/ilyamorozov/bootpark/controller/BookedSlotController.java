@@ -32,8 +32,8 @@ public class BookedSlotController {
     }
 
     // Build Get BookedSlot REST API (specific user or admin)
-    @GetMapping({"user{user_id}/{slot_id}", "{slot_id}"})
-    public ResponseEntity<BookedSlotDto> getBookedSlotByUserIdAndSlotId(@PathVariable Long user_id, @PathVariable Long slot_id) {
+    @GetMapping({"*/{slot_id}", "{slot_id}"})
+    public ResponseEntity<BookedSlotDto> getBookedSlotByUserIdAndSlotId(@PathVariable Long slot_id) {
         BookedSlotDto bookedSlotDto = bookedSlotService.getBookedSlotById(slot_id);
         return ResponseEntity.ok(bookedSlotDto);
     }
@@ -46,15 +46,15 @@ public class BookedSlotController {
     }
 
     // Build Update BookedSlot REST API (for specific user or admin)
-    @PutMapping({"user{user_id}/{slot_id}", "{slot_id}"})
-    public ResponseEntity<BookedSlotDto> updateBookedSlot(@PathVariable Long user_id, @PathVariable Long slot_id, @RequestBody BookedSlotDto bookedSlotDTO) {
+    @PutMapping({"*/{slot_id}", "{slot_id}"})
+    public ResponseEntity<BookedSlotDto> updateBookedSlot(@PathVariable Long slot_id, @RequestBody BookedSlotDto bookedSlotDTO) {
         BookedSlotDto bookedSlotDto = bookedSlotService.updateBookedSlot(slot_id, bookedSlotDTO);
         return ResponseEntity.ok(bookedSlotDto);
     }
 
     // Build Delete BookedSlot REST API (for specific user or admin)
-    @DeleteMapping({"user{user_id}/{slot_id}", "{slot_id}"})
-    public ResponseEntity<String> deleteBookedSlot(@PathVariable Long user_id, @PathVariable Long slot_id) {
+    @DeleteMapping({"*/{slot_id}", "{slot_id}"})
+    public ResponseEntity<String> deleteBookedSlot(@PathVariable Long slot_id) {
         bookedSlotService.deleteBookedSlot(slot_id);
         return ResponseEntity.ok("BookedSlot deleted");
     }

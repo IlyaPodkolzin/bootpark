@@ -4,12 +4,14 @@ import com.ilyamorozov.bootpark.dto.ParkingDto;
 import com.ilyamorozov.bootpark.entity.Parking;
 import com.ilyamorozov.bootpark.exception.ResourceNotFoundException;
 import com.ilyamorozov.bootpark.mapper.ParkingMapper;
+import com.ilyamorozov.bootpark.repository.BookedSlotRepository;
 import com.ilyamorozov.bootpark.repository.ParkingRepository;
 import com.ilyamorozov.bootpark.service.ParkingService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,26 +19,28 @@ import java.util.stream.Collectors;
 public class ParkingServiceImpl implements ParkingService {
 
     private ParkingRepository parkingRepository;
+    private BookedSlotRepository bookedSlotRepository;
+    private ParkingMapper parkingMapper;
 
     @Override
     public ParkingDto createParking(ParkingDto parkingDto) {
 
-        Parking parking = ParkingMapper.toParking(parkingDto);
+        Parking parking = parkingMapper.toParking(parkingDto);
         Parking savedParking = parkingRepository.save(parking);
-        return ParkingMapper.toParkingDto(savedParking);
+        return parkingMapper.toParkingDto(savedParking);
     }
 
     @Override
     public ParkingDto getParkingById(Long parkingId) {
         Parking parking = parkingRepository.findById(parkingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Parking with id " + parkingId + " not found"));
-        return ParkingMapper.toParkingDto(parking);
+        return parkingMapper.toParkingDto(parking);
     }
 
     @Override
     public List<ParkingDto> getAllParkings() {
         List<Parking> parkings = parkingRepository.findAll();
-        return parkings.stream().map(ParkingMapper::toParkingDto)
+        return parkings.stream().map(parkingMapper::toParkingDto)
                 .collect(Collectors.toList());
     }
 
@@ -50,11 +54,18 @@ public class ParkingServiceImpl implements ParkingService {
         parking.setAddress(updatedParkingDto.getAddress());
         parking.setAvailableSlotsAmount(updatedParkingDto.getAvailableSlotsAmount());
         parking.setParkingSlotsAmount(updatedParkingDto.getParkingSlotsAmount());
-        parking.setBookedSlots(updatedParkingDto.getBookedSlots());
+        parking.setBookedSlots(updatedParkingDto.getBookedSlotsIds()  // по айдишникам получаем все bookedSlots
+                                            .stream()
+                                            .map(bookedSlotRepository::findById)
+                                            .toList()
+                                            .stream()
+                                            .filter(Optional::isPresent)
+                                            .map(Optional::get)
+                                            .collect(Collectors.toList()));
 
         Parking updatedParkingObj = parkingRepository.save(parking);
 
-        return ParkingMapper.toParkingDto(updatedParkingObj);
+        return parkingMapper.toParkingDto(updatedParkingObj);
     }
 
     @Override

@@ -18,5 +18,5 @@ public class ParkingDto {
     private String address;
     private Integer availableSlotsAmount;
     private Integer parkingSlotsAmount;
-    private List<BookedSlot> bookedSlots;
+    private List<Long> bookedSlotsIds;
 }
