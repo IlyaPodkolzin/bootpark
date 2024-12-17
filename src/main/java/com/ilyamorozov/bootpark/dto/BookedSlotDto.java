@@ -1,6 +1,7 @@
 package com.ilyamorozov.bootpark.dto;
 
 import com.ilyamorozov.bootpark.entity.Parking;
+import com.ilyamorozov.bootpark.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,6 @@ public class BookedSlotDto {
 
     private Long id;
     private Parking parking;
+    private UserEntity userEntity;
     private LocalDateTime dateOfEnd;
 }

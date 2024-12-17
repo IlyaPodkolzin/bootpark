@@ -24,6 +24,10 @@ public class BookedSlot {
     @JoinColumn(name = "parking")
     private Parking parking;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_owner")
+    private UserEntity userEntity;
+
     @Column(name = "date_of_end", nullable = false)
     private LocalDateTime dateOfEnd;
 }

@@ -22,6 +22,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -43,6 +44,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Разрешить доступ к эндпоинтам, начинающимся с /api
+                        .requestMatchers(HttpMethod.POST, "/api/parkings").hasAnyAuthority("ADMIN") // Только админ может
+                        .requestMatchers(HttpMethod.GET, "/api/parkings/*").hasAnyAuthority("ADMIN")  // выполнять
+                        .requestMatchers(HttpMethod.PUT, "/api/parkings/*").hasAnyAuthority("ADMIN")  // CRUD-операции
+                        .requestMatchers(HttpMethod.DELETE, "/api/parkings/*").hasAnyAuthority("ADMIN")  // с парковками
                         .anyRequest().authenticated()          // Все остальные запросы требуют аутентификации
                 )
                 .sessionManagement(session -> session

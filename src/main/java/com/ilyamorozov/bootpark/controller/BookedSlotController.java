@@ -12,7 +12,7 @@ import java.util.List;
 @CrossOrigin
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/booked")
+@RequestMapping("/api/booked/")
 public class BookedSlotController {
 
     private BookedSlotService bookedSlotService;

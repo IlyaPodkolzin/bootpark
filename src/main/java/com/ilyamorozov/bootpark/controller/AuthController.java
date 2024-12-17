@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -53,7 +53,13 @@ public class AuthController {
                         loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
-        return new ResponseEntity<>(new AuthResponceDto(token), HttpStatus.OK);
+        AuthResponceDto authResponceDto = new AuthResponceDto(token);
+        UserEntity userEntity = userRepository.findByUsername(loginDto.getUsername()).get();  // надо из юзера достать его роли
+        authResponceDto.setRoles(userEntity.getRoles()  // т.е. не сами роли, а их названия
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toList()));
+        return new ResponseEntity<>(authResponceDto, HttpStatus.OK);
     }
 
     @PostMapping("register")

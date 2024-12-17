@@ -45,6 +45,7 @@ public class BookedSlotServiceImpl implements BookedSlotService {
                 orElseThrow(() -> new ResourceNotFoundException("Booked slot with id " + id + " not found"));
 
         bookedSlot.setParking(updatedBookedSlotDto.getParking());
+        bookedSlot.setUserEntity(updatedBookedSlotDto.getUserEntity());
         bookedSlot.setDateOfEnd(updatedBookedSlotDto.getDateOfEnd());
 
         BookedSlot updatedBookedSlotObj = bookedSlotRepository.save(bookedSlot);

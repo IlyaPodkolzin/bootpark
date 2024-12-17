@@ -9,6 +9,7 @@ public class BookedSlotMapper {
         return new BookedSlotDto(
                 bookedSlot.getId(),
                 bookedSlot.getParking(),
+                bookedSlot.getUserEntity(),
                 bookedSlot.getDateOfEnd()
         );
     }
@@ -17,6 +18,7 @@ public class BookedSlotMapper {
         return new BookedSlot(
                 bookedSlotDto.getId(),
                 bookedSlotDto.getParking(),
+                bookedSlotDto.getUserEntity(),
                 bookedSlotDto.getDateOfEnd()
         );
     }
