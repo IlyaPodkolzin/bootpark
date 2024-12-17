@@ -59,6 +59,7 @@ public class AuthController {
                 .stream()
                 .map(Role::getName)
                 .collect(Collectors.toList()));
+        authResponceDto.setId(userEntity.getId());  // добавили айдишник, чтобы можно было создавать BookedSlot и получать BookedSlot
         return new ResponseEntity<>(authResponceDto, HttpStatus.OK);
     }
 

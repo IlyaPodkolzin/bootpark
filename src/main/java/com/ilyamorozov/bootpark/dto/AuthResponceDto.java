@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class AuthResponceDto {
+    private Long id;
     private String accessToken;
     private String tokenType = "Bearer ";
     private List<String> roles = new ArrayList<>();

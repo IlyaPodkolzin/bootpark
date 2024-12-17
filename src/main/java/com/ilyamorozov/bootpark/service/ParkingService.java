@@ -9,5 +9,6 @@ public interface ParkingService {
     ParkingDto getParkingById(Long parkingId);
     List<ParkingDto> getAllParkings();
     ParkingDto updateParking(Long id, ParkingDto updatedParkingDto);
+    ParkingDto updateParkingAvailablePlacesOnly(Long id, Integer availablePlaces);
     void deleteParking(Long id);
 }

@@ -54,17 +54,21 @@ public class ParkingServiceImpl implements ParkingService {
         parking.setAddress(updatedParkingDto.getAddress());
         parking.setAvailableSlotsAmount(updatedParkingDto.getAvailableSlotsAmount());
         parking.setParkingSlotsAmount(updatedParkingDto.getParkingSlotsAmount());
-        parking.setBookedSlots(updatedParkingDto.getBookedSlotsIds()  // по айдишникам получаем все bookedSlots
-                                            .stream()
-                                            .map(bookedSlotRepository::findById)
-                                            .toList()
-                                            .stream()
-                                            .filter(Optional::isPresent)
-                                            .map(Optional::get)
-                                            .collect(Collectors.toList()));
 
         Parking updatedParkingObj = parkingRepository.save(parking);
 
+        return parkingMapper.toParkingDto(updatedParkingObj);
+    }
+
+    @Override
+    public ParkingDto updateParkingAvailablePlacesOnly(Long id, Integer availablePlaces) {
+        Parking parking = parkingRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Parking with id " + id + " not found")
+        );
+
+        parking.setAvailableSlotsAmount(availablePlaces);
+
+        Parking updatedParkingObj = parkingRepository.save(parking);
         return parkingMapper.toParkingDto(updatedParkingObj);
     }
 
