@@ -9,7 +9,7 @@ public interface BookedSlotService {
     BookedSlotDto getBookedSlotById(Long id);
     BookedSlotDto getBookedSlotByUserIdAndSlotId(Long userId, Long slotId);
     List<BookedSlotDto> getBookedSlotsByUserId(Long userId);
-    List<BookedSlotDto> getAllBookedSlots();
+    List<BookedSlotDto> getAllBookedSlotsOfParking(Long parkingId);
     void deleteBookedSlot(Long id);
     void deleteBookedSlotByUserIdAndSlotId(Long userId, Long slotId);
 }

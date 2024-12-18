@@ -61,8 +61,8 @@ public class BookedSlotServiceImpl implements BookedSlotService {
     }
 
     @Override
-    public List<BookedSlotDto> getAllBookedSlots() {
-        List<BookedSlot> bookedSlots = bookedSlotRepository.findAll();
+    public List<BookedSlotDto> getAllBookedSlotsOfParking(Long parkingId) {
+        List<BookedSlot> bookedSlots = bookedSlotRepository.findByParking_Id(parkingId);
         return bookedSlots.stream().map(bookedSlotMapper::toBookedSlotDto)
                 .collect(Collectors.toList());
     }

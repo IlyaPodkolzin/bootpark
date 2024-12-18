@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("*")  // используется, чтобы клиент смог обратиться к серверу
+@CrossOrigin(origins = "http://localhost:3000") // используется, чтобы клиент смог обратиться к серверу
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/parkings")

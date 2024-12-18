@@ -32,7 +32,7 @@ public class BookedSlotController {
     }
 
     // Get BookedSlot REST API (admin)
-    @GetMapping("admin/{slot_id}")
+    @GetMapping("admin/slot/{slot_id}")
     public ResponseEntity<BookedSlotDto> getBookedSlotBySlotId(@PathVariable Long slot_id) {
         BookedSlotDto bookedSlotDto = bookedSlotService.getBookedSlotById(slot_id);
         return ResponseEntity.ok(bookedSlotDto);
@@ -46,15 +46,15 @@ public class BookedSlotController {
         return ResponseEntity.ok(bookedSlotDto);
     }
 
-    // Get All BookedSlots REST API (admin only)
-    @GetMapping("admin")
-    public ResponseEntity<List<BookedSlotDto>> getAllBookedSlots() {
-        List<BookedSlotDto> bookedSlotsDtos = bookedSlotService.getAllBookedSlots();
+    // Get All BookedSlots of Parking REST API (admin only)
+    @GetMapping("admin/parking/{parking_id}")
+    public ResponseEntity<List<BookedSlotDto>> getAllBookedSlots(@PathVariable Long parking_id) {
+        List<BookedSlotDto> bookedSlotsDtos = bookedSlotService.getAllBookedSlotsOfParking(parking_id);
         return ResponseEntity.ok(bookedSlotsDtos);
     }
 
     // Delete BookedSlot REST API (admin)
-    @DeleteMapping("admin/{slot_id}")
+    @DeleteMapping("admin/slot/{slot_id}")
     public ResponseEntity<String> deleteBookedSlot(@PathVariable Long slot_id) {
         bookedSlotService.deleteBookedSlot(slot_id);
         return ResponseEntity.ok("BookedSlot deleted");

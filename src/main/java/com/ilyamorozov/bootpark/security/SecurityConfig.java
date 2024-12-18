@@ -47,7 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/parkings/general").hasAnyAuthority("ADMIN") // Только админ может выполнять
                         .requestMatchers(HttpMethod.PUT, "/api/parkings/general/*").hasAnyAuthority("ADMIN")  // CRUD-операции
                         .requestMatchers(HttpMethod.DELETE, "/api/parkings/general/*").hasAnyAuthority("ADMIN")  // с парковками (GET могут делать все)
-                        .requestMatchers("/api/booked/admin/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/api/booked/admin/**").hasAnyAuthority("ADMIN")  // Для бронирований имеются ссылки, предназначенные только для админа
+                        .requestMatchers("/api/user/**").hasAnyAuthority("ADMIN")  // С пользователями работает ТОЛЬКО админ
                         .anyRequest().permitAll()         // Все остальные запросы требуют аутентификации
                 )
                 .sessionManagement(session -> session
