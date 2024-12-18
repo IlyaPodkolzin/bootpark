@@ -64,20 +64,38 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<AuthResponceDto> register(@RequestBody RegisterDto registerDto) {
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>("Username is taken!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
         UserEntity user = new UserEntity();
         user.setUsername(registerDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
+
         Role roles = roleRepository.findByName("USER").get();
         user.setRoles(Collections.singletonList(roles));
 
         userRepository.save(user);
 
-        return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
+        // Создаём аутентификацию для генерации токена
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        registerDto.getUsername(),
+                        registerDto.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtGenerator.generateToken(authentication);
+
+        // Возвращаем токен, роли и ID пользователя
+        AuthResponceDto authResponsDto = new AuthResponceDto(token);
+        authResponsDto.setRoles(user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toList()));
+        authResponsDto.setId(user.getId());
+
+        return new ResponseEntity<>(authResponsDto, HttpStatus.OK);
     }
 }
