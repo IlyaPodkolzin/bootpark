@@ -4,6 +4,7 @@ import com.ilyamorozov.bootpark.dto.BookedSlotDto;
 import com.ilyamorozov.bootpark.entity.BookedSlot;
 import com.ilyamorozov.bootpark.entity.Parking;
 import com.ilyamorozov.bootpark.entity.UserEntity;
+import com.ilyamorozov.bootpark.exception.DuplicateException;
 import com.ilyamorozov.bootpark.exception.ResourceNotFoundException;
 import com.ilyamorozov.bootpark.mapper.BookedSlotMapper;
 import com.ilyamorozov.bootpark.repository.BookedSlotRepository;
@@ -28,6 +29,12 @@ public class BookedSlotServiceImpl implements BookedSlotService {
 
     @Override
     public BookedSlotDto createBookedSlot(BookedSlotDto bookedSlotDto) {
+        Optional<BookedSlot> foundBookedSlot = bookedSlotRepository
+                .findByUserEntity_IdAndParking_Id(bookedSlotDto.getUserEntityId(), bookedSlotDto.getParkingId());
+        if (foundBookedSlot.isPresent()) {
+            throw new DuplicateException("Booked slot already exists for this parking and user");
+        }
+
         BookedSlot bookedSlot = bookedSlotMapper.toBookedSlot(bookedSlotDto);
         BookedSlot savedBookedSlot = bookedSlotRepository.save(bookedSlot);
         return bookedSlotMapper.toBookedSlotDto(savedBookedSlot);
@@ -37,6 +44,12 @@ public class BookedSlotServiceImpl implements BookedSlotService {
     public BookedSlotDto getBookedSlotById(Long id) {
         BookedSlot bookedSlot = bookedSlotRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("Booked slot with id " + id + " not found"));
+        return bookedSlotMapper.toBookedSlotDto(bookedSlot);
+    }
+
+    @Override
+    public BookedSlotDto getBookedSlotByUserIdAndSlotId(Long userId, Long slotId) {
+        BookedSlot bookedSlot = bookedSlotRepository.findByUserEntity_IdAndId(userId, slotId);
         return bookedSlotMapper.toBookedSlotDto(bookedSlot);
     }
 
@@ -55,39 +68,17 @@ public class BookedSlotServiceImpl implements BookedSlotService {
     }
 
     @Override
-    public BookedSlotDto updateBookedSlot(Long id, BookedSlotDto updatedBookedSlotDto) {
-        BookedSlot bookedSlot = bookedSlotRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Booked slot with id " + id + " not found"));
-
-
-
-        UserEntity user = new UserEntity();  // получаем юзера из его айдишника
-        Optional<UserEntity> optionalUserEntity = userRepository.findById(updatedBookedSlotDto.getUserEntityId());
-        if (optionalUserEntity.isPresent()) {
-            user = optionalUserEntity.get();
-        }
-
-        Parking parking = new Parking();  // получаем парковку из ее айдишника
-        Optional<Parking> optionalParking = parkingRepository.findById(updatedBookedSlotDto.getParkingId());
-        if (optionalParking.isPresent()) {
-            parking = optionalParking.get();
-        }
-
-
-
-        bookedSlot.setParking(parking);
-        bookedSlot.setUserEntity(user);
-
-        BookedSlot updatedBookedSlotObj = bookedSlotRepository.save(bookedSlot);
-
-        return bookedSlotMapper.toBookedSlotDto(updatedBookedSlotObj);
-    }
-
-    @Override
     public void deleteBookedSlot(Long id) {
         BookedSlot bookedSlot = bookedSlotRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("Booked slot with id " + id + " not found"));
 
         bookedSlotRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteBookedSlotByUserIdAndSlotId(Long userId, Long slotId) {
+        BookedSlot bookedSlot = bookedSlotRepository.findByUserEntity_IdAndId(userId, slotId);
+
+        bookedSlotRepository.delete(bookedSlot);
     }
 }

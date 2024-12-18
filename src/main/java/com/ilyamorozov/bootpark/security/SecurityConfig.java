@@ -44,10 +44,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Разрешить доступ к эндпоинтам, начинающимся с /api
-                        .requestMatchers(HttpMethod.POST, "/api/parkings/general").hasAnyAuthority("ADMIN") // Только админ может
-                        .requestMatchers(HttpMethod.GET, "/api/parkings/general/*").hasAnyAuthority("ADMIN")  // выполнять
+                        .requestMatchers(HttpMethod.POST, "/api/parkings/general").hasAnyAuthority("ADMIN") // Только админ может выполнять
                         .requestMatchers(HttpMethod.PUT, "/api/parkings/general/*").hasAnyAuthority("ADMIN")  // CRUD-операции
-                        .requestMatchers(HttpMethod.DELETE, "/api/parkings/general/*").hasAnyAuthority("ADMIN")  // с парковками
+                        .requestMatchers(HttpMethod.DELETE, "/api/parkings/general/*").hasAnyAuthority("ADMIN")  // с парковками (GET могут делать все)
+                        .requestMatchers("/api/booked/admin/**").hasAnyAuthority("ADMIN")
                         .anyRequest().permitAll()         // Все остальные запросы требуют аутентификации
                 )
                 .sessionManagement(session -> session

@@ -52,7 +52,9 @@ public class ParkingServiceImpl implements ParkingService {
 
         parking.setName(updatedParkingDto.getName());
         parking.setAddress(updatedParkingDto.getAddress());
-        parking.setAvailableSlotsAmount(updatedParkingDto.getAvailableSlotsAmount());
+        parking.setAvailableSlotsAmount(  // число оставшихся мест меняется на столько же, на сколько поменялось общее число мест
+                parking.getAvailableSlotsAmount() -
+                        (parking.getParkingSlotsAmount() - updatedParkingDto.getParkingSlotsAmount()));
         parking.setParkingSlotsAmount(updatedParkingDto.getParkingSlotsAmount());
 
         Parking updatedParkingObj = parkingRepository.save(parking);

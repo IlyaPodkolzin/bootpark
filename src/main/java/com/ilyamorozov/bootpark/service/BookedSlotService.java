@@ -7,8 +7,9 @@ import java.util.List;
 public interface BookedSlotService {
     BookedSlotDto createBookedSlot(BookedSlotDto bookedSlotDto);
     BookedSlotDto getBookedSlotById(Long id);
+    BookedSlotDto getBookedSlotByUserIdAndSlotId(Long userId, Long slotId);
     List<BookedSlotDto> getBookedSlotsByUserId(Long userId);
     List<BookedSlotDto> getAllBookedSlots();
-    BookedSlotDto updateBookedSlot(Long id, BookedSlotDto updatedBookedSlotDto);
     void deleteBookedSlot(Long id);
+    void deleteBookedSlotByUserIdAndSlotId(Long userId, Long slotId);
 }

@@ -17,45 +17,54 @@ public class BookedSlotController {
 
     private BookedSlotService bookedSlotService;
 
-    // Build Add BookedSlot REST API
+    // Add BookedSlot REST API
     @PostMapping
     public ResponseEntity<BookedSlotDto> createBookedSlot(@RequestBody BookedSlotDto bookedSlotDTO) {
         BookedSlotDto savedBookedSlot = bookedSlotService.createBookedSlot(bookedSlotDTO);
         return new ResponseEntity<>(savedBookedSlot, HttpStatus.CREATED);
     }
 
-    // Build Get All BookedSlots REST API (specific user)
-    @GetMapping("user{user_id}")
+    // Get All BookedSlots REST API (specific user)
+    @GetMapping("user/{user_id}")
     public ResponseEntity<List<BookedSlotDto>> getAllBookedSlotsByUserId(@PathVariable Long user_id) {
         List<BookedSlotDto> bookedSlotsDtos = bookedSlotService.getBookedSlotsByUserId(user_id);
         return ResponseEntity.ok(bookedSlotsDtos);
     }
 
-    // Build Get BookedSlot REST API (specific user or admin)
-    @GetMapping({"*/{slot_id}", "{slot_id}"})
-    public ResponseEntity<BookedSlotDto> getBookedSlotByUserIdAndSlotId(@PathVariable Long slot_id) {
+    // Get BookedSlot REST API (admin)
+    @GetMapping("admin/{slot_id}")
+    public ResponseEntity<BookedSlotDto> getBookedSlotBySlotId(@PathVariable Long slot_id) {
         BookedSlotDto bookedSlotDto = bookedSlotService.getBookedSlotById(slot_id);
         return ResponseEntity.ok(bookedSlotDto);
     }
 
-    // Build Get All BookedSlots REST API (admin only)
-    @GetMapping
+    // Get BookedSlot REST API (specific user)
+    @GetMapping("user/{user_id}/{slot_id}")
+    public ResponseEntity<BookedSlotDto> getBookedSlotByUserIdAndSlotId(@PathVariable Long user_id,
+                                                                        @PathVariable Long slot_id) {
+        BookedSlotDto bookedSlotDto = bookedSlotService.getBookedSlotByUserIdAndSlotId(user_id, slot_id);
+        return ResponseEntity.ok(bookedSlotDto);
+    }
+
+    // Get All BookedSlots REST API (admin only)
+    @GetMapping("admin")
     public ResponseEntity<List<BookedSlotDto>> getAllBookedSlots() {
         List<BookedSlotDto> bookedSlotsDtos = bookedSlotService.getAllBookedSlots();
         return ResponseEntity.ok(bookedSlotsDtos);
     }
 
-    // Build Update BookedSlot REST API (for specific user or admin)
-    @PutMapping({"*/{slot_id}", "{slot_id}"})
-    public ResponseEntity<BookedSlotDto> updateBookedSlot(@PathVariable Long slot_id, @RequestBody BookedSlotDto bookedSlotDTO) {
-        BookedSlotDto bookedSlotDto = bookedSlotService.updateBookedSlot(slot_id, bookedSlotDTO);
-        return ResponseEntity.ok(bookedSlotDto);
-    }
-
-    // Build Delete BookedSlot REST API (for specific user or admin)
-    @DeleteMapping({"*/{slot_id}", "{slot_id}"})
+    // Delete BookedSlot REST API (admin)
+    @DeleteMapping("admin/{slot_id}")
     public ResponseEntity<String> deleteBookedSlot(@PathVariable Long slot_id) {
         bookedSlotService.deleteBookedSlot(slot_id);
+        return ResponseEntity.ok("BookedSlot deleted");
+    }
+
+    // Delete BookedSlot REST API (specific user)
+    @DeleteMapping("user/{user_id}/{slot_id}")
+    public ResponseEntity<String> deleteBookedSlotByUserIdAndSlotId(@PathVariable Long user_id,
+                                                                    @PathVariable Long slot_id) {
+        bookedSlotService.deleteBookedSlotByUserIdAndSlotId(user_id, slot_id);
         return ResponseEntity.ok("BookedSlot deleted");
     }
 }
